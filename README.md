@@ -5,6 +5,8 @@
 > import 'common-lottery/dist/style.css'
 > ```
 
+![抽奖组件展示](assets/lottery-demo.png)
+
 一个功能丰富的Vue 3抽奖转盘组件，支持自定义奖品、H5自适应、动态样式和灵活的交互。
 
 ## 安装
