@@ -52,7 +52,7 @@ function onEnd() {
   setTimeout(() => {
     const idx = Math.floor(Math.random() * lotteryConfig.prizeList.length)
     // winningId.value = lotteryConfig.prizeList[idx].id
-    winningId.value = 'prize2'
+    winningId.value = 'prize6'
   }, 5000)
 }
 </script>
