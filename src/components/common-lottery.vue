@@ -86,6 +86,16 @@ const isRunning = ref(false)
 const isWaitingResult = ref(false)
 const currentRotation = ref(0)
 let rotateTimer: number | null = null
+let currentSpeed = 8; // 初始转速
+const minSpeed = 2; // 最小转速
+const deceleration = 0.15; // 每帧减速量
+let isSlowing = false;
+let slowDownFrameId: number | null = null;
+let slowDownStartTime: number | null = null;
+const slowDownDuration = 3000; // 6秒减速时间
+let initialSpeed: number | null = null;
+let pendingWinnerId: string | null = null;
+let slowDownTimeout: number | null = null;
 
 const displayItems = computed(() => {
   const items = [...props.lotteryConfig.prizeList]
@@ -136,49 +146,107 @@ function startLottery() {
   isRunning.value = true
   isWaitingResult.value = false
   if (rotateTimer) clearInterval(rotateTimer)
-  // 在这里重置 winningId，通知父组件
-  emit('update:winningId', undefined)
+  if (slowDownFrameId) cancelAnimationFrame(slowDownFrameId)
+  currentSpeed = 8;
+  isSlowing = false;
   rotateTimer = window.setInterval(() => {
-    currentRotation.value = (currentRotation.value + 5) % 360
-  }, 10)
+    currentRotation.value = (currentRotation.value + currentSpeed) % 360
+    if (currentSpeed < 12) {
+      currentSpeed += 0.1;
+    }
+  }, 16)
+  emit('update:winningId', undefined)
   emit('start')
 }
 
 function stopLottery() {
   if (!isRunning.value || isWaitingResult.value) return
   isWaitingResult.value = true
+  isSlowing = true
+  if (rotateTimer) clearInterval(rotateTimer)
+  initialSpeed = currentSpeed;
+  slowDownStartTime = performance.now();
+  pendingWinnerId = null;
+  if (slowDownTimeout) clearTimeout(slowDownTimeout);
+  slowDown()
+  // 3秒后检查 winnerId
+  slowDownTimeout = window.setTimeout(() => {
+    if (pendingWinnerId) {
+      // 3秒内已拿到winnerId，3秒到后再停
+      stopAtWinner(pendingWinnerId)
+      pendingWinnerId = null;
+    } else {
+      // 3秒后还没winnerId，保持最低速
+      currentSpeed = minSpeed;
+    }
+  }, slowDownDuration);
   emit('end')
+}
+
+function slowDown() {
+  function frame() {
+    if (!isSlowing) return;
+    const now = performance.now();
+    const elapsed = now - (slowDownStartTime || now);
+    if (elapsed < slowDownDuration) {
+      // 在6秒内，速度逐渐降低
+      const progress = elapsed / slowDownDuration;
+      currentSpeed = (initialSpeed || 8) - ((initialSpeed || 8) - minSpeed) * progress;
+    } else {
+      // 6秒后，保持最小速度
+      currentSpeed = minSpeed;
+    }
+    currentRotation.value = (currentRotation.value + currentSpeed) % 360;
+    slowDownFrameId = requestAnimationFrame(frame);
+  }
+  frame();
 }
 
 function handleButtonClick() {
   if (!isRunning.value) {
     startLottery()
-  } else {
+  } else if (!isWaitingResult.value) {
     stopLottery()
   }
 }
 
 watch(() => props.winningId, (newId: string | undefined) => {
   if (!isRunning.value || !isWaitingResult.value || !newId) return
-  if (rotateTimer) clearInterval(rotateTimer)
-  const targetIndex = displayItems.value.findIndex((item: PrizeItem) => item.id === newId)
+  const now = performance.now();
+  const elapsed = now - (slowDownStartTime || now);
+  if (elapsed < slowDownDuration) {
+    // 3秒内，winnerId先到，记录下来，等3秒到再停
+    pendingWinnerId = newId;
+  } else {
+    // 3秒后才到，立即停
+    stopAtWinner(newId);
+  }
+})
+
+function stopAtWinner(winnerId: string) {
+  isSlowing = false;
+  if (slowDownFrameId) cancelAnimationFrame(slowDownFrameId);
+  const targetIndex = displayItems.value.findIndex((item: PrizeItem) => item.id === winnerId)
   if (targetIndex === -1) return
   const targetAngle = 360 - (targetIndex * itemAngle.value + itemAngle.value / 2)
   let start = currentRotation.value % 360
   let delta = (targetAngle - start + 360) % 360
-  rotateTimer = window.setInterval(() => {
-    if (delta <= 0) {
+  let duration = (delta / currentSpeed) * 16 // 使用当前转速计算动画时长
+  const startTime = performance.now()
+  function animate(now: number) {
+    const elapsed = now - startTime
+    if (elapsed >= duration) {
       currentRotation.value = targetAngle
-      clearInterval(rotateTimer!)
       isRunning.value = false
       isWaitingResult.value = false
       return
     }
-    const step = Math.min(5, delta)
-    currentRotation.value = (currentRotation.value + step) % 360
-    delta -= step
-  }, 10)
-})
+    const progress = elapsed / duration
+    currentRotation.value = start + delta * progress
+    requestAnimationFrame(animate)
+  }
+  requestAnimationFrame(animate)
+}
 
 function easeOutCubic(x: number) {
   return 1 - Math.pow(1 - x, 3)
@@ -207,7 +275,7 @@ function easeOutCubic(x: number) {
 .lottery-pointer {
   position: absolute;
   left: 50%;
-  top: calc(50% - 30px - 40px);
+  top: calc(50% - 30px - 40px); /* 50% - 圆半径 - 三角形高 */
   width: 0;
   height: 0;
   border-left: 18px solid transparent;

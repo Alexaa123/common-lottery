@@ -1,6 +1,6 @@
 {
   "name": "common-lottery",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A Vue 3 lottery component",
   "main": "dist/common-lottery.umd.js",
   "module": "dist/common-lottery.es.js",
@@ -32,6 +32,6 @@
     "vue-tsc": "^1.8.24"
   },
   "dependencies": {
-    "common-lottery": "^1.0.3"
+    "common-lottery": "^1.0.5"
   }
 }

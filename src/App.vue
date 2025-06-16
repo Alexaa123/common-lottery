@@ -12,21 +12,21 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-// import CommonLottery from 'common-lottery'
-import CommonLottery from './components/common-lottery.vue'
+import CommonLottery from 'common-lottery'
+// import CommonLottery from './components/common-lottery.vue'
 
 const lotteryConfig = {
   canLottery: true,
   prizeList: [
-    { id: 'prize1', name: '一等奖', iconUrl: 'https://img.icons8.com/color/48/000000/trophy.png' },
-    { id: 'prize2', name: '二等奖', iconUrl: 'https://img.icons8.com/color/48/000000/medal-second-place.png' },
-    { id: 'prize3', name: '三等奖', iconUrl: 'https://img.icons8.com/color/48/000000/medal-third-place.png' },
-    { id: 'prize4', name: '参与奖', iconUrl: 'https://img.icons8.com/color/48/000000/gift.png' },
-    { id: 'prize5', name: '幸运奖', iconUrl: 'https://img.icons8.com/color/48/000000/star.png' },
-    { id: 'prize6', name: '安慰奖', iconUrl: 'https://img.icons8.com/color/48/000000/sad.png' },
-    { id: 'prize7', name: '红包', iconUrl: 'https://img.icons8.com/color/48/000000/red-packet.png' },
-    { id: 'prize8', name: '再来一次', iconUrl: 'https://img.icons8.com/color/48/000000/repeat.png' },
-    { id: 'prize9', name: '美食券', iconUrl: 'https://img.icons8.com/color/48/000000/restaurant.png' },
+    { id: 'prize1', name: '一等奖'},
+    { id: 'prize2', name: '二等奖' },
+    { id: 'prize3', name: '三等奖'},
+    { id: 'prize4', name: '参与奖'},
+    { id: 'prize5', name: '幸运奖'},
+    { id: 'prize6', name: '安慰奖'},
+    { id: 'prize7', name: '红包'},
+    { id: 'prize8', name: '再来一次'},
+    { id: 'prize9', name: '美食券'},
     // { id: 'prize10', name: '电影票', iconUrl: 'https://img.icons8.com/color/48/000000/ticket.png' },
     // { id: 'prize11', name: '咖啡券', iconUrl: 'https://img.icons8.com/color/48/000000/coffee-to-go.png' },
     // { id: 'prize12', name: '购物卡', iconUrl: 'https://img.icons8.com/color/48/000000/shopping-cart.png' },
@@ -51,9 +51,9 @@ function onEnd() {
   // 模拟异步获取中奖ID
   setTimeout(() => {
     const idx = Math.floor(Math.random() * lotteryConfig.prizeList.length)
-    winningId.value = lotteryConfig.prizeList[idx].id
-    // winningId.value = 'prize1'
-  }, 1000)
+    // winningId.value = lotteryConfig.prizeList[idx].id
+    winningId.value = 'prize2'
+  }, 5000)
 }
 </script>
 
