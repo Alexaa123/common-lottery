@@ -80,6 +80,7 @@ const emit = defineEmits<{
   (e: 'start'): void
   (e: 'end'): void
   (e: 'update:winningId', id?: string): void
+  (e: 'stopped'): void
 }>()
 
 const isRunning = ref(false)
@@ -239,6 +240,7 @@ function stopAtWinner(winnerId: string) {
       currentRotation.value = targetAngle
       isRunning.value = false
       isWaitingResult.value = false
+      emit('stopped')
       return
     }
     const progress = elapsed / duration

@@ -6,6 +6,7 @@
       v-model:winningId="winningId"
       @start="onStart"
       @end="onEnd"
+      @stopped="onStopped"
     />
   </div>
 </template>
@@ -47,13 +48,17 @@ function onStart() {
   // winningId的重置已移至子组件处理
 }
 
+function onStopped() {
+  console.error('stoped')
+}
+
 function onEnd() {
   // 模拟异步获取中奖ID
   setTimeout(() => {
     const idx = Math.floor(Math.random() * lotteryConfig.prizeList.length)
     // winningId.value = lotteryConfig.prizeList[idx].id
     winningId.value = 'prize6'
-  }, 5000)
+  }, 1000)
 }
 </script>
 
