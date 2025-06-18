@@ -100,9 +100,9 @@ let slowDownTimeout: number | null = null;
 
 const displayItems = computed(() => {
   const items = [...props.lotteryConfig.prizeList]
-  if (items.length % 2 !== 0) {
-    items.push({ id: 'thanks', name: '谢谢参与' })
-  }
+  // if (items.length % 2 !== 0) {
+  //   items.push({ id: 'thanks', name: '谢谢参与' })
+  // }
   return items
 })
 

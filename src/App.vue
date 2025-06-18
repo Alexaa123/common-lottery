@@ -13,8 +13,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import CommonLottery from 'common-lottery'
-// import CommonLottery from './components/common-lottery.vue'
+// import CommonLottery from 'common-lottery'
+import CommonLottery from './components/common-lottery.vue'
 
 const lotteryConfig = {
   canLottery: true,
