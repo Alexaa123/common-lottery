@@ -100,9 +100,6 @@ let slowDownTimeout: number | null = null;
 
 const displayItems = computed(() => {
   const items = [...props.lotteryConfig.prizeList]
-  // if (items.length % 2 !== 0) {
-  //   items.push({ id: 'thanks', name: '谢谢参与' })
-  // }
   return items
 })
 
@@ -253,6 +250,19 @@ function stopAtWinner(winnerId: string) {
 function easeOutCubic(x: number) {
   return 1 - Math.pow(1 - x, 3)
 }
+
+function reset() {
+  isRunning.value = false;
+  isWaitingResult.value = false;
+  currentRotation.value = 0;
+  if (rotateTimer) clearInterval(rotateTimer);
+  if (slowDownFrameId) cancelAnimationFrame(slowDownFrameId);
+  currentSpeed = 8;
+  isSlowing = false;
+  pendingWinnerId = null;
+}
+
+defineExpose({ reset })
 </script>
 
 <style scoped>

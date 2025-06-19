@@ -9,6 +9,8 @@
 
 一个功能丰富的Vue 3抽奖转盘组件，支持自定义奖品、H5自适应、动态样式和灵活的交互。
 
+该组件展示链接：https://raw.githubusercontent.com/Alexaa123/common-lottery/main/src/assets/demo.gif
+
 ## 安装
 
 ```bash
@@ -104,6 +106,29 @@ const handleLotteryEnd = () => {
 | `@end`           | `void`    | 用户点击"结束抽奖"按钮时触发，表示父组件需要提供中奖ID。  |
 | `update:winningId` | `string \| undefined` | 用于 `v-model:winningId` 双向绑定，子组件会emit此事件来重置 `winningId`。 |
 | `stopped`        | `void`    | 转盘完全停止时触发。                                      |
+
+## 方法
+
+### reset
+
+通过ref获取组件实例后，可调用`reset()`方法将转盘复原为未抽奖状态。
+
+**示例：**
+
+```vue
+<template>
+  <common-lottery ref="lotteryRef" ... />
+  <button @click="resetLottery">重置转盘</button>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+const lotteryRef = ref()
+function resetLottery() {
+  lotteryRef.value?.reset()
+}
+</script>
+```
 
 ## 特性
 

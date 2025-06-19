@@ -2,6 +2,7 @@
   <div class="app">
     <h1>抽奖组件示例</h1>
     <common-lottery
+      ref="lotteryRef"
       :lottery-config="lotteryConfig"
       v-model:winningId="winningId"
       @start="onStart"
@@ -13,8 +14,10 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-// import CommonLottery from 'common-lottery'
-import CommonLottery from './components/common-lottery.vue'
+import CommonLottery from 'common-lottery'
+// import CommonLottery from './components/common-lottery.vue'
+
+const lotteryRef = ref()
 
 const lotteryConfig = {
   canLottery: true,
@@ -55,10 +58,11 @@ function onStopped() {
 function onEnd() {
   // 模拟异步获取中奖ID
   setTimeout(() => {
-    const idx = Math.floor(Math.random() * lotteryConfig.prizeList.length)
     // winningId.value = lotteryConfig.prizeList[idx].id
-    winningId.value = 'prize6'
-  }, 1000)
+    // winningId.value = 'prize6'
+    // 通过ref调用reset方法
+    lotteryRef.value?.reset()
+  }, 2000)
 }
 </script>
 
